@@ -15,6 +15,11 @@ namespace SQLRepository
             Database.SetInitializer(new SqlRepositoryDbInitializer());
         }
 
+        public UserContext(string connStr) : base(connStr)
+        {
+            Database.SetInitializer(new SqlRepositoryDbInitializer());
+        }
+
         public virtual DbSet<User> Users { get; set; }
     }
 }

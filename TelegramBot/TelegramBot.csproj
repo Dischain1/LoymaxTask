@@ -48,8 +48,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot_InputParser.cs" />
+    <Compile Include="Bot_MessageLiterals.cs" />
     <Compile Include="Bot _Commands.cs" />
     <Compile Include="Bot.cs" />
+    <Compile Include="IWebhookBot.cs" />
     <Compile Include="IBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

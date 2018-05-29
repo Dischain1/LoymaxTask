@@ -49,9 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SqlRep_Context.cs" />
+    <Compile Include="Migrations\201805261439397_InitialCreate.cs" />
+    <Compile Include="Migrations\201805261439397_InitialCreate.Designer.cs">
+      <DependentUpon>201805261439397_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805272122308_aa.cs" />
+    <Compile Include="Migrations\201805272122308_aa.Designer.cs">
+      <DependentUpon>201805272122308_aa.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="SqlRep.cs" />
-    <Compile Include="SqlRep_Seeder.cs" />
+    <Compile Include="Seeder.cs" />
     <Compile Include="SqlRep_CRUD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -64,6 +73,14 @@
       <Project>{2EAD178F-53FC-4658-B490-6BECD17331C3}</Project>
       <Name>EFModel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201805261439397_InitialCreate.resx">
+      <DependentUpon>201805261439397_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805272122308_aa.resx">
+      <DependentUpon>201805272122308_aa.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

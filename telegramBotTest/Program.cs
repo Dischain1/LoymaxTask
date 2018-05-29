@@ -8,15 +8,17 @@ using SQLRepository;
 using EFModel;
 using System.ComponentModel;
 using System.Threading;
+using TelegramBot;
 
 namespace telegramBotTest
 {
     internal class Program
     {
-        private static LoymaxTaskBot bot = new LoymaxTaskBot();
+        private static LoymaxTaskBot bot = new LoymaxTaskBot(new SQLRepository.SqlRepository());
 
         static void Main(string[] args)
         {
+            bot.StartListen();
             Console.ReadKey();
         }
     }
