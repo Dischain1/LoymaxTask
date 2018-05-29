@@ -20,7 +20,8 @@ namespace SQLRepository
 
         public async Task<User> GetUser(int id)
         {
-            return await context.Users.FindAsync(id);
+            //return await context.Users.FindAsync(id);
+            return await context.Users.Where(x=>x.TelegramUserId == id).FirstOrDefaultAsync();
         }
 
         public async Task<List<User>> GetUsers()
@@ -30,7 +31,9 @@ namespace SQLRepository
 
         public async Task RemoveUser(int id)
         {
-            var user = await context.Users.FindAsync(id);
+            //var user = await context.Users.FindAsync(id);
+            var user = await context.Users.Where(x => x.TelegramUserId == id).FirstOrDefaultAsync();
+
             if (user == null)
                 return;
 

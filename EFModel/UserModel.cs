@@ -8,6 +8,9 @@ namespace EFModel
         [Key]
         public int Id { get; set; }
 
+        [Required]
+        public int TelegramUserId { get; set; }
+
         [Required, MaxLength(50)]
         public string Name { get; set; }
 

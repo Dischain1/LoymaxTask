@@ -9,7 +9,6 @@ namespace EFModel
 {
     public interface IRepository : IDisposable
     {
-        // ---------------------------------- User CRUD ----------------------------------
         Task<List<User>> GetUsers();
         Task AddUser(User user);
         Task RemoveUser(int userId);
