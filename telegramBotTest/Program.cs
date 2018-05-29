@@ -14,10 +14,12 @@ namespace telegramBotTest
 {
     internal class Program
     {
-        private static LoymaxTaskBot bot = new LoymaxTaskBot(new SQLRepository.SqlRepository());
+        private static readonly string connStr = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SQLRepository.UserContext;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        static LoymaxTaskBot bot; 
 
         static void Main(string[] args)
         {
+            bot = new LoymaxTaskBot(new SQLRepository.SqlRepository(connStr));
             bot.StartListen();
             Console.ReadKey();
         }

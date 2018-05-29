@@ -10,14 +10,9 @@ namespace SQLRepository
 {
     public class UserContext: DbContext
     {
-        public UserContext():base()
-        {
-            Database.SetInitializer(new SqlRepositoryDbInitializer());
-        }
-
         public UserContext(string connStr) : base(connStr)
         {
-            Database.SetInitializer(new SqlRepositoryDbInitializer());
+            //Database.SetInitializer(new SqlRepositoryDbInitializer());
         }
 
         public virtual DbSet<User> Users { get; set; }

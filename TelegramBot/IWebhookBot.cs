@@ -20,6 +20,6 @@ namespace TelegramBot
         Task OnWebhookedMessage(Message message);
         Task OnUnsupportedUpdate(Message message);
 
-        void TestDBAsync();
+        //void TestDBAsync();
     }
 }

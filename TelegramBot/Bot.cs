@@ -56,15 +56,23 @@ namespace TelegramBot
         }
         public async void OnMessageRecieved(object sender, MessageEventArgs e)
         {
-            switch (e.Message.Type)
+            try
             {
-                case MessageType.Text:
-                    await ExecuteIfCommand(e.Message);
-                    break;
-                default:
-                    await botClient.SendTextMessageAsync(e.Message.Chat.Id, ReplyText.UnsupportedType, replyToMessageId: e.Message.MessageId);
-                    break;
+                switch (e.Message.Type)
+                {
+                    case MessageType.Text:
+                        await ExecuteIfCommand(e.Message);
+                        break;
+                    default:
+                        await botClient.SendTextMessageAsync(e.Message.Chat.Id, ReplyText.UnsupportedType, replyToMessageId: e.Message.MessageId);
+                        break;
+                }
             }
+            catch (Exception exeption)
+            {
+                await botClient.SendTextMessageAsync(e.Message.Chat.Id, $"Возникла ошибка {exeption.Message}", replyToMessageId: e.Message.MessageId);
+            }
+          
         }
         #endregion
 
@@ -73,11 +81,11 @@ namespace TelegramBot
             await botClient.SendTextMessageAsync(528397367, text);
         }
 
-        public async void TestDBAsync()
-        {
-            await rep.AddUser(new EFModel.User { Name = "Имя1", Surname = "Фамилия1", Patronymic = "Отчество2", DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 20), TelegramUserId = 10 });
-            var users = await rep.GetUsers();
-            await SendTextAsync(users[0].Name);
-        }
+        //public async void TestDBAsync()
+        //{
+        //    await rep.AddUser(new EFModel.User { Name = "Имя1", Surname = "Фамилия1", Patronymic = "Отчество2", DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 20), TelegramUserId = 10 });
+        //    var users = await rep.GetUsers();
+        //    await SendTextAsync(users[0].Name);
+        //}
     }
 }

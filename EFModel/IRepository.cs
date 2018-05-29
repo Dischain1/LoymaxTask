@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EFModel
 {
-    public interface IRepository : IDisposable
+    public interface IRepository
     {
         Task<List<User>> GetUsers();
         Task AddUser(User user);

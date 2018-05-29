@@ -61,7 +61,6 @@
     <Compile Include="Context.cs" />
     <Compile Include="SqlRep.cs" />
     <Compile Include="Seeder.cs" />
-    <Compile Include="SqlRep_CRUD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
