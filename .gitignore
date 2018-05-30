@@ -241,3 +241,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 SQLRepository/Migrations/
+TelegramBotWebApi/connectionStrings.config

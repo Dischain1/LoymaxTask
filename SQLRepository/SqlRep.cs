@@ -18,7 +18,7 @@ namespace SQLRepository
             this.connStr = connStr;
         }
 
-        // CRUD
+        // ---------------------------------------- CRUD ----------------------------------------
         public async Task AddUser(User user)
         {
             using (var context = new UserContext(connStr))
