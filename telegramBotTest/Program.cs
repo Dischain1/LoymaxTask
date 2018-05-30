@@ -8,16 +8,41 @@ using SQLRepository;
 using EFModel;
 using System.ComponentModel;
 using System.Threading;
+using TelegramBot;
+using Autofac;
+using System.Configuration;
 
 namespace telegramBotTest
 {
+    public static class ContainerConfig
+    {
+        private static readonly string connStr = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SQLRepository.UserContext;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        public static Autofac.IContainer Configure()
+        {
+            var builder = new ContainerBuilder();
+
+            string botToken = ConfigurationManager.AppSettings["DefaultToken"];
+            builder.RegisterType<LoymaxTaskBot>().As<IWebhookBot>().
+                WithParameter(new TypedParameter(typeof(string), botToken));
+
+            builder.RegisterType<SqlRepository>().As<IRepository>()
+                .WithParameter(new TypedParameter(typeof(string), connStr));
+
+            return builder.Build();
+        }
+    }
+
     internal class Program
     {
-        private static LoymaxTaskBot bot = new LoymaxTaskBot();
-
         static void Main(string[] args)
         {
-            Console.ReadKey();
+            var container = ContainerConfig.Configure();
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var bot = scope.Resolve<IWebhookBot>();
+                bot.StartListen();
+                Console.ReadKey();
+            }
         }
     }
 }

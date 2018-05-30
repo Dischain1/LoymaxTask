@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace EFModel
 {
-    public interface IRepository : IDisposable
+    public interface IRepository
     {
-        // ---------------------------------- User CRUD ----------------------------------
         Task<List<User>> GetUsers();
         Task AddUser(User user);
         Task RemoveUser(int userId);

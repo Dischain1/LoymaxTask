@@ -1,55 +1,87 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
-using SQLRepository;
-using EFModel;
-using System.Threading;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Args;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBot
 {
-    public partial class LoymaxTaskBot : IBot
+    public partial class LoymaxTaskBot : IWebhookBot
     {
-        delegate Task BotCommand(MessageEventArgs e);
-        Dictionary<string, BotCommand> Commands;
-        public void SetCommands()
+        public delegate Task BotCommandDelegate(Message e);
+        public static Dictionary<string, BotCommandDelegate> Commands = new Dictionary<string, BotCommandDelegate>
         {
-            Commands = new Dictionary<string, BotCommand>
+            {"/register", new BotCommandDelegate(Register) },
+            {"/delete", new BotCommandDelegate(DeleteUser) },
+            {"/get", new BotCommandDelegate(GetUser) },
+            {"/start", new BotCommandDelegate(Start) },
+        };
+
+        public static async Task Register(Message msg)
+        {
+            var user = ConstructUserFromInput(msg);
+            if (user != null)
             {
-                {"/register", new BotCommand(Register) },
-                {"/delete", new BotCommand(DeleteUser) },
-                {"/get", new BotCommand(GetUser) },
-                {"/help", new BotCommand(GetUser) },
-            };
+                if (await rep.GetUser(msg.From.Id) == null)
+                {
+                    await rep.AddUser(user);
+                    await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.SuccessfullyRegistered, replyToMessageId: msg.MessageId);
+                }
+                else
+                    await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.AlreadyRegistered, replyToMessageId: msg.MessageId);
+            }
+            else
+                await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.WrongRegisterInput, replyToMessageId: msg.MessageId);
         }
 
-        public async Task Register(MessageEventArgs e)
+        public static async Task DeleteUser(Message msg)
         {
-            var user = new User {
-            };
+            var user = await rep.GetUser(msg.From.Id);
+            if (user != null)
+            {
+                await rep.RemoveUser(msg.From.Id);
+                await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.SuccessfullyDeleted, replyToMessageId: msg.MessageId);
+            }
+            else
+                await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.UserNotFound, replyToMessageId: msg.MessageId);
+        }
 
-            await rep.AddUser(user);
-        }
-        public async Task DeleteUser(MessageEventArgs e)
+        public static async Task GetUser(Message msg)
         {
-            await rep.RemoveUser(1);
+            var user = await rep.GetUser(msg.From.Id);
+            if (user != null)
+            {
+                string reply = $"Пользователь найден.\r\nФамилия: {user.Surname}\r\nИмя: {user.Name}\r\nОтчество: {user.Patronymic}\r\nДата рождения: {user.DateOfBirth.ToShortDateString()}";
+                await botClient.SendTextMessageAsync(msg.Chat.Id, reply, replyToMessageId: msg.MessageId);
+            }
+            else
+                await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.UserNotFound, replyToMessageId: msg.MessageId);
         }
-        public async Task GetUser(MessageEventArgs e)
+
+        public async Task OnUnknownCommand(Message msg)
         {
-            await rep.GetUser(1);
+            await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.BotSupportedCommands, replyToMessageId: msg.MessageId);
         }
-        public async Task OnUnknownCommand(MessageEventArgs e)
+
+        public static async Task Start(Message msg)
         {
-            await botClient.SendTextMessageAsync(e.Message.Chat.Id, "Я знаю только комманды\r\n /register\r\n /get\r\n /del\r\n");
-        }
-        public Task Help(MessageEventArgs e)
-        {
-            throw new NotImplementedException();
+            var keyboard = new ReplyKeyboardMarkup
+            {
+                Keyboard = new[] 
+                {
+                    new KeyboardButton[]
+                    {
+                        "/register",
+                    },
+                    new KeyboardButton[]
+                    {
+                        "/get",
+                        "/delete",
+                    }
+                }
+            };
+            await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.BotSupportedCommands, replyToMessageId: msg.MessageId, replyMarkup: keyboard);
         }
     }
 }

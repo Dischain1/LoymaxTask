@@ -1,53 +1,87 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Bot;
-using SQLRepository;
 using EFModel;
 using System.Threading;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Args;
-using System.Text.RegularExpressions;
+using Telegram.Bot.Types;
+using System;
 
 namespace TelegramBot
 {
-    public partial class LoymaxTaskBot : IBot
+    public partial class LoymaxTaskBot: IWebhookBot
     {
-        // в реальном проекте этот токен был бы скрыт в игнорируемом гитом конфиг. файле
-        private static readonly string botAccessToken = "605947598:AAHBgcrZK9SbdYk4qf02JoTQSPOGdlrl3EI";
-        private static readonly TelegramBotClient botClient = new TelegramBotClient(botAccessToken);
+        private static TelegramBotClient botClient;
 
-        private static SqlRepository rep = new SqlRepository();
+        private static IRepository rep;
 
-        public LoymaxTaskBot(string hook)
+        public LoymaxTaskBot(IRepository repository, string botToken)
         {
-            SetCommands();
-            botClient.SetWebhookAsync(hook);
+            rep = repository;
+            botClient = new TelegramBotClient(botToken);
         }
 
-        private async void ExecuteIfCommand(MessageEventArgs e)
+        public void ListenWithWebhook(string hookUrl)
         {
-            Regex commandPattern = new Regex(@"^[/][a-z]+\s+*$");
-            if (commandPattern.IsMatch(e.Message.Text))
+             botClient.SetWebhookAsync(hookUrl);
+        }
+        public async Task OnWebhookedMessage(Message message)
+        {
+            switch (message.Type)
             {
-                BotCommand command;
-                Commands.TryGetValue(e.Message.Text, out command);
-
-                if (command != null)
-                    await command.Invoke(e);
-                else
-                    await OnUnknownCommand(e);
+                case MessageType.Text:
+                    await ExecuteIfCommand(message);
+                    break;
+                default:
+                    await botClient.SendTextMessageAsync(message.Chat.Id, ReplyText.UnsupportedType, replyToMessageId: message.MessageId);
+                    break;
             }
-            else
-                await botClient.SendTextMessageAsync(e.Message.Chat.Id, "Я принимаю только комманды");
         }
 
-        private void ListenForMessages()
+        public async Task OnUnsupportedUpdate(Message message)
         {
-            botClient.StartReceiving();
+            await botClient.SendTextMessageAsync(message.Chat.Id, ReplyText.UnsupportedType, replyToMessageId: message.MessageId);
         }
 
+        #region локальная отладка
+        public async void StartListen()
+        {
+            await botClient.SetWebhookAsync("");
+            botClient.OnMessage += OnMessageRecieved;
+            botClient.OnCallbackQuery += OnCallbackQueryReceived;
+            Thread listener = new Thread(new ThreadStart(() => { botClient.StartReceiving(); }));
+            listener.IsBackground = true;
+            listener.Start();
+        }
+        public async void OnMessageRecieved(object sender, MessageEventArgs e)
+        {
+            try
+            {
+                switch (e.Message.Type)
+                {
+                    case MessageType.Text:
+                        await ExecuteIfCommand(e.Message);
+                        break;
+                    default:
+                        await botClient.SendTextMessageAsync(e.Message.Chat.Id, ReplyText.UnsupportedType, replyToMessageId: e.Message.MessageId);
+                        break;
+                }
+            }
+            catch (Exception exeption)
+            {
+                await botClient.SendTextMessageAsync(e.Message.Chat.Id, $"Возникла ошибка {exeption.Message}", replyToMessageId: e.Message.MessageId);
+            }        
+        }
+        private static async void OnCallbackQueryReceived(object sender, CallbackQueryEventArgs callbackQueryEventArgs)
+        {
+            var callbackQuery = callbackQueryEventArgs.CallbackQuery;
+            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id,$"Получен ответ {callbackQuery.Data}");
+        }
+        #endregion
+
+        public async Task SendTextAsync(string text, int chatId = 528397367)
+        {
+            await botClient.SendTextMessageAsync(chatId, text);
+        }
     }
 }

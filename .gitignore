@@ -240,3 +240,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+SQLRepository/Migrations/
+TelegramBotWebApi/connectionStrings.config
+TelegramBotWebApi/accessTokens.config
+telegramBotTest/accessTokens.config

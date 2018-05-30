@@ -11,16 +11,53 @@ namespace SQLRepository
 {
     public partial class SqlRepository : IRepository
     {
-        private UserContext context;
+        private readonly string connStr;
 
-        public SqlRepository()
+        public SqlRepository(string connStr)
         {
-            context = new UserContext();
+            this.connStr = connStr;
         }
 
-        public void Dispose()
+        // ---------------------------------------- CRUD ----------------------------------------
+        public async Task AddUser(User user)
         {
-            context.Dispose();
+            using (var context = new UserContext(connStr))
+            {
+                context.Users.Add(user);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<User> GetUser(int id)
+        {
+            using (var context = new UserContext(connStr))
+            {
+                await context.SaveChangesAsync();
+                return await context.Users.Where(x => x.TelegramUserId == id).FirstOrDefaultAsync();
+            }
+        }
+
+        public async Task<List<User>> GetUsers()
+        {
+            using (var context = new UserContext(connStr))
+            {
+                return await context.Users.ToListAsync();
+            }
+        }
+
+        public async Task RemoveUser(int id)
+        {
+            using (var context = new UserContext(connStr))
+            {
+                //var user = await context.Users.FindAsync(id);
+                var user = await context.Users.Where(x => x.TelegramUserId == id).FirstOrDefaultAsync();
+
+                if (user == null)
+                    return;
+
+                context.Users.Remove(user);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
