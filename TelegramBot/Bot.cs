@@ -17,7 +17,7 @@ namespace TelegramBot
 
         private static IRepository rep;
 
-        public LoymaxTaskBot(IRepository repository)
+        public LoymaxTaskBot(IRepository repository, string botToken)
         {
             rep = repository;
             botClient = new TelegramBotClient(botAccessToken);

@@ -26,7 +26,7 @@ namespace TelegramBotWebApi.Controllers
                 //    await WebApiApplication.bot.SendTextAsync("123");
                 //    break;
                 default:
-                    await WebApiApplication.bot.SendTextAsync("Я умею отвечать только на сообщения");
+                    await WebApiApplication.bot.OnUnsupportedUpdate(update.Message);
                     break;
             }
            

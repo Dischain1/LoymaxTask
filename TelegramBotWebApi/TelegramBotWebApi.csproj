@@ -221,6 +221,7 @@
     <Content Include="Metadata\deploymentTemplates\apiappconfig.azureresource.json" />
     <Content Include="apiapp.json" />
     <Content Include="connectionStrings.config" />
+    <Content Include="accessTokens.config" />
     <None Include="Properties\PublishProfiles\TelegramBotWebApi - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

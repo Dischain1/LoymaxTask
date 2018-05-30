@@ -242,3 +242,4 @@ ModelManifest.xml
 .fake/
 SQLRepository/Migrations/
 TelegramBotWebApi/connectionStrings.config
+TelegramBotWebApi/accessTokens.config
