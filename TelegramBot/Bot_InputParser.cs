@@ -38,26 +38,32 @@ namespace TelegramBot
         enum InputFields
         {
             CommandWord = 0,
-            Name,
             Surname,
+            Name,
             Patronymic,
             DateOfBirth
         }
         static readonly Regex namePattern = new Regex(@"^[a-zA-Zа-яА-Я]{1,50}?\z");
         static readonly Regex datePattern = new Regex(@"^\d{1,2}?.\d{1,2}?.\d{4}\z");
+        static readonly DateTime OldestPossibleDate = new DateTime(1900, 1, 1); 
 
         private static EFModel.User ConstructUserFromInput(Message message)
         {
             string[] inputData = Regex.Split(message.Text, @"\s");
             if (inputData.Length == userInputFieldsCount &&
-                namePattern.IsMatch(inputData[(int)InputFields.Name]) &&
                 namePattern.IsMatch(inputData[(int)InputFields.Surname]) &&
+                namePattern.IsMatch(inputData[(int)InputFields.Name]) &&
                 namePattern.IsMatch(inputData[(int)InputFields.Patronymic]) &&
                 datePattern.IsMatch(inputData[(int)InputFields.DateOfBirth]))
             {
                 try
                 {
                     var inputDate = Convert.ToDateTime(inputData[(int)InputFields.DateOfBirth]);
+                    if (inputDate > DateTime.Now || inputDate < OldestPossibleDate)
+                    {
+                        botClient.SendTextMessageAsync(message.Chat.Id, ReplyText.WrongDateRange, replyToMessageId: message.MessageId);
+                        return null;
+                    }
                     return new EFModel.User
                     {
                         Id = message.From.Id,
@@ -68,7 +74,10 @@ namespace TelegramBot
                         DateOfBirth = inputDate
                     };
                 }
-                catch{}
+                catch
+                {
+                    botClient.SendTextMessageAsync(message.Chat.Id, $"{ReplyText.WrongDate} {inputData[(int)InputFields.DateOfBirth]}", replyToMessageId: message.MessageId);
+                }
             }
             return null;
         }

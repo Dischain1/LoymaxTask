@@ -81,9 +81,9 @@ namespace TelegramBot
         }
         #endregion
 
-        public async Task SendTextAsync(string text)
+        public async Task SendTextAsync(string text, int chatId = 528397367)
         {
-            await botClient.SendTextMessageAsync(528397367, text);
+            await botClient.SendTextMessageAsync(chatId, text);
         }
     }
 }

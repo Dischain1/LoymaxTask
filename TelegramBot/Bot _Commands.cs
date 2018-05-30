@@ -7,7 +7,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBot
 {
-    public partial class LoymaxTaskBot
+    public partial class LoymaxTaskBot : IWebhookBot
     {
         public delegate Task BotCommandDelegate(Message e);
         public static Dictionary<string, BotCommandDelegate> Commands = new Dictionary<string, BotCommandDelegate>
@@ -15,7 +15,7 @@ namespace TelegramBot
             {"/register", new BotCommandDelegate(Register) },
             {"/delete", new BotCommandDelegate(DeleteUser) },
             {"/get", new BotCommandDelegate(GetUser) },
-            {"/start", new BotCommandDelegate(Help) },
+            {"/start", new BotCommandDelegate(Start) },
         };
 
         public static async Task Register(Message msg)
@@ -52,7 +52,7 @@ namespace TelegramBot
             var user = await rep.GetUser(msg.From.Id);
             if (user != null)
             {
-                string reply = $"Пользователь найден.\r\nИмя: {user.Name} Фамилия: {user.Surname} Отчество: {user.Patronymic} Дата рождения: {user.DateOfBirth.ToShortDateString()}";
+                string reply = $"Пользователь найден.\r\nФамилия: {user.Surname}\r\nИмя: {user.Name}\r\nОтчество: {user.Patronymic}\r\nДата рождения: {user.DateOfBirth.ToShortDateString()}";
                 await botClient.SendTextMessageAsync(msg.Chat.Id, reply, replyToMessageId: msg.MessageId);
             }
             else
@@ -64,7 +64,7 @@ namespace TelegramBot
             await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.BotSupportedCommands, replyToMessageId: msg.MessageId);
         }
 
-        public static async Task Help(Message msg)
+        public static async Task Start(Message msg)
         {
             var keyboard = new ReplyKeyboardMarkup
             {
@@ -72,12 +72,12 @@ namespace TelegramBot
                 {
                     new KeyboardButton[]
                     {
-                        "Зарегистрироваться",
+                        "/register",
                     },
                     new KeyboardButton[]
                     {
-                        "Проверить данные",
-                        "Удалить регистрацию",
+                        "/get",
+                        "/delete",
                     }
                 }
             };

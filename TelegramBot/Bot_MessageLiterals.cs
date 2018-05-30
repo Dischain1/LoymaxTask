@@ -24,7 +24,9 @@ namespace TelegramBot
             public static string WrongRegisterInput = "Для регистрации введите ФИО и дату рождения в указаном формате\r\n /register Иванов Иван Иванович дд.мм.гггг";
             public static string UserNotFound = "Пользователь не зарегистрирован";
             public static string SuccessfullyDeleted = "Пользователь удален из БД";
-            public static string BotSupportedCommands = "Я обрабатываю комманды\r\n /register\r\n /get\r\n /delete\r\n /help\r\n";
+            public static string BotSupportedCommands = $"Я обрабатываю комманды{Environment.NewLine}/start - Клавиатура{Environment.NewLine}/register - Зарегистрироваться{Environment.NewLine}/get - Получить данные о пользователе{Environment.NewLine}/delete - Удалить регистрацию";
+            public static string WrongDateRange = $"Некорректно введенная дата. Допустимый диапазон {OldestPossibleDate.ToShortDateString()} - {DateTime.Now.ToShortDateString()}";
+            public static string WrongDate = $"Некорректно введенная дата";
         }
     }
 }
