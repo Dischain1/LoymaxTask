@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBot
 {
@@ -65,7 +66,22 @@ namespace TelegramBot
 
         public static async Task Help(Message msg)
         {
-            await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.BotSupportedCommands, replyToMessageId: msg.MessageId);
+            var keyboard = new ReplyKeyboardMarkup
+            {
+                Keyboard = new[] 
+                {
+                    new KeyboardButton[]
+                    {
+                        "Зарегистрироваться",
+                    },
+                    new KeyboardButton[]
+                    {
+                        "Проверить данные",
+                        "Удалить регистрацию",
+                    }
+                }
+            };
+            await botClient.SendTextMessageAsync(msg.Chat.Id, ReplyText.BotSupportedCommands, replyToMessageId: msg.MessageId, replyMarkup: keyboard);
         }
     }
 }

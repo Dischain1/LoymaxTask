@@ -50,6 +50,7 @@ namespace TelegramBot
         {
             await botClient.SetWebhookAsync("");
             botClient.OnMessage += OnMessageRecieved;
+            botClient.OnCallbackQuery += OnCallbackQueryReceived;
             Thread listener = new Thread(new ThreadStart(() => { botClient.StartReceiving(); }));
             listener.IsBackground = true;
             listener.Start();
@@ -71,8 +72,12 @@ namespace TelegramBot
             catch (Exception exeption)
             {
                 await botClient.SendTextMessageAsync(e.Message.Chat.Id, $"Возникла ошибка {exeption.Message}", replyToMessageId: e.Message.MessageId);
-            }
-          
+            }        
+        }
+        private static async void OnCallbackQueryReceived(object sender, CallbackQueryEventArgs callbackQueryEventArgs)
+        {
+            var callbackQuery = callbackQueryEventArgs.CallbackQuery;
+            await botClient.AnswerCallbackQueryAsync(callbackQuery.Id,$"Получен ответ {callbackQuery.Data}");
         }
         #endregion
 
@@ -80,12 +85,5 @@ namespace TelegramBot
         {
             await botClient.SendTextMessageAsync(528397367, text);
         }
-
-        //public async void TestDBAsync()
-        //{
-        //    await rep.AddUser(new EFModel.User { Name = "Имя1", Surname = "Фамилия1", Patronymic = "Отчество2", DateOfBirth = DateTime.Now - TimeSpan.FromDays(365 * 20), TelegramUserId = 10 });
-        //    var users = await rep.GetUsers();
-        //    await SendTextAsync(users[0].Name);
-        //}
     }
 }
