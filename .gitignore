@@ -243,3 +243,4 @@ ModelManifest.xml
 SQLRepository/Migrations/
 TelegramBotWebApi/connectionStrings.config
 TelegramBotWebApi/accessTokens.config
+telegramBotTest/accessTokens.config

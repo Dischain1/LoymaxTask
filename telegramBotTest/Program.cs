@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Threading;
 using TelegramBot;
 using Autofac;
+using System.Configuration;
 
 namespace telegramBotTest
 {
@@ -20,7 +21,10 @@ namespace telegramBotTest
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<LoymaxTaskBot>().As<IWebhookBot>();
+            string botToken = ConfigurationManager.AppSettings["DefaultToken"];
+            builder.RegisterType<LoymaxTaskBot>().As<IWebhookBot>().
+                WithParameter(new TypedParameter(typeof(string), botToken));
+
             builder.RegisterType<SqlRepository>().As<IRepository>()
                 .WithParameter(new TypedParameter(typeof(string), connStr));
 
@@ -37,8 +41,8 @@ namespace telegramBotTest
             {
                 var bot = scope.Resolve<IWebhookBot>();
                 bot.StartListen();
+                Console.ReadKey();
             }
-            Console.ReadKey();
         }
     }
 }

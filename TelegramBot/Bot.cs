@@ -11,8 +11,6 @@ namespace TelegramBot
 {
     public partial class LoymaxTaskBot: IWebhookBot
     {
-        // в реальном проекте этот токен был бы скрыт в игнорируемом гитом конфиг. файле
-        private static readonly string botAccessToken = "605947598:AAHBgcrZK9SbdYk4qf02JoTQSPOGdlrl3EI";
         private static TelegramBotClient botClient;
 
         private static IRepository rep;
@@ -20,7 +18,7 @@ namespace TelegramBot
         public LoymaxTaskBot(IRepository repository, string botToken)
         {
             rep = repository;
-            botClient = new TelegramBotClient(botAccessToken);
+            botClient = new TelegramBotClient(botToken);
         }
 
         public void ListenWithWebhook(string hookUrl)
