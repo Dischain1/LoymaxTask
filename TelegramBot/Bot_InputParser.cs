@@ -11,6 +11,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Args;
 using System.Text.RegularExpressions;
 using Telegram.Bot.Types;
+using System.Globalization;
 
 namespace TelegramBot
 {
@@ -58,7 +59,9 @@ namespace TelegramBot
             {
                 try
                 {
-                    var inputDate = Convert.ToDateTime(inputData[(int)InputFields.DateOfBirth]);
+                    CultureInfo RusCultureInfo = new CultureInfo("ru-RU");
+                    DateTime inputDate = DateTime.Parse(inputData[(int)InputFields.DateOfBirth], RusCultureInfo);
+                    //DateTime inputDate = DateTime.ParseExact(inputData[(int)InputFields.DateOfBirth], "dd.mm.yyyy", System.Globalization.CultureInfo.);
                     if (inputDate > DateTime.Now || inputDate < OldestPossibleDate)
                     {
                         botClient.SendTextMessageAsync(message.Chat.Id, ReplyText.WrongDateRange, replyToMessageId: message.MessageId);
